@@ -21,13 +21,41 @@ def handle_events():
             if event.button == SDL_BUTTON_LEFT:
                 mouse_num += 1
                 click_mouse_x, click_mouse_y = event.x, TUK_HEIGHT - 1 - event.y
+                character_move()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
     pass
 
+def character_move():
+    global frame, mouse_x, mouse_y, mouse_num, click_mouse_x, click_mouse_y, x, y, x1, y1
+
+    if click_mouse_x == x and click_mouse_y == y:
+        clear_canvas()
+        # fill
+
+    x1, y1 = x, y
+    for i in range(0, 100 + 1, 1):
+        t = i / 100
+        x = (1 - t) * x1 + t * click_mouse_x
+        y = (1 - t) * y1 + t * click_mouse_y
+
+        # 이전 위치에 그려진 캐릭터를 지우기
+        clear_canvas()
+        TUK_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
+        mouse.clip_draw(0, 0, 50, 52, click_mouse_x, click_mouse_y)
+        frame = (frame + 1) % 8
+        # 캐릭터를 현재 위치에 그리기
+        if click_mouse_x - x1 >= 0:
+            character.clip_draw(frame * 100, 100 * 1, 100, 100, x, y)
+        elif click_mouse_x - x1 < 0:
+            character.clip_draw(frame * 100, 0, 100, 100, x, y)
+        delay(0.01)
+        update_canvas()
+
 running = True
 mouse_x, mouse_y = TUK_WIDTH // 2, TUK_HEIGHT // 2
 click_mouse_x, click_mouse_y = TUK_WIDTH // 2, TUK_HEIGHT // 2
+x, y, x1, y1 = TUK_WIDTH // 2, TUK_HEIGHT // 2, TUK_WIDTH // 2, TUK_HEIGHT // 2  # 캐릭터의 좌표
 frame = 0
 mouse_num = 0
 hide_cursor()
